@@ -4,39 +4,86 @@ import React, { useEffect, useRef, useState } from "react";
 
 type Token = { lyric: string; chord?: string | null; beat: 1 | 2 | 3 | 4 };
 type Line = { tokens: Token[] };
-type Song = { title: string; bpm: number; timeSig: [4, 4]; lines: Line[] };
+type Song = {
+  title: string;
+  author: string;
+  style: string;              // điệu/genre
+  recommendedTempo: string;   // tempo khuyên dùng (text)
+  bpm: number;
+  timeSig: [4, 4];
+  lines: Line[];
+};
 
 const demoSong: Song = {
-  title: "Demo Song",
+  title: "Ngày xuân long phụng sum vầy",
+  author: "Quang Huy",
+  style: "Ballad / 4-4 (đệm chậm, dễ tập)",
+  recommendedTempo: "60–80 BPM (mới tập), 80–96 BPM (chuẩn hơn)",
   bpm: 80,
   timeSig: [4, 4],
   lines: [
-    {
-      tokens: [
-        { lyric: "Mừng", chord: "C", beat: 1 },
-        { lyric: "tết ", chord: null, beat: 2 },
-        { lyric: "đến", chord: null, beat: 3 },
-        { lyric: "mang  lộc", chord: null, beat: 4 },
-      ],
-    },
-    {
-      tokens: [
-        { lyric: "đến", chord: "G", beat: 1 },
-        { lyric: "nhà", chord: null, beat: 2 },
-        { lyric: "nhà", chord: null, beat: 3 },
-        { lyric: "cánh  mai", chord: null, beat: 4 },
-      ],
-    },
-    {
-      tokens: [
-        { lyric: "vàng", chord: "Am", beat: 1 },
-        { lyric: "cành "+" "+" đào", chord: null, beat: 2 },
-        { lyric: "hồng", chord: null, beat: 3 },
-        { lyric: "thắm ", chord: null, beat: 4 },
-      ],
-    },
-  ],
-};
+    { tokens: [ { lyric: "Mừng", chord: "C", beat: 1 }, 
+      { lyric: "tết", chord: null, beat: 1 }, { lyric: "đến", chord:null, beat: 3 },
+       { lyric: "mang", chord: null, beat: 2 }, { lyric: "lộc", chord: null, beat: 2 }, ], }, 
+       { tokens: [ { lyric: "đến", chord: "G", beat: 1 }, { lyric: "nhà", chord: null, beat: 1 }, 
+        { lyric: "nhà", chord: null, beat: 2 }, { lyric: "cánh", chord: null, beat: 2 }, 
+        { lyric: "mai", chord: null, beat: 2 }, ], }, { tokens: [ { lyric: "vàng", chord: "Am", beat: 1 }, 
+          { lyric: "cành", chord: null, beat: 1 }, { lyric: "đào", chord: null, beat: 1 }, 
+          { lyric: "hồng", chord: null, beat: 2 }, { lyric: "thắm", chord: null, beat: 2 }, ], }, 
+          { tokens: [ { lyric: "tươi", chord: "Em", beat: 1 }, 
+            { lyric: "", chord: null, beat: 2 }, ], }, 
+          { tokens: [ { lyric: "Chúc", chord: "F", beat: 1 }, 
+            { lyric: "cụ", chord: null, beat: 1 }, 
+            { lyric: "già", chord: null, beat: 2 }, 
+            { lyric: "được", chord: null, beat: 2 }, 
+            { lyric: "sống", chord: null, beat: 2 }, ], },
+           { tokens: [ { lyric: "lâu", chord: "C", beat: 1 }, 
+            { lyric: "sống", chord: null, beat: 1 }, 
+            { lyric: "khỏe", chord: null, beat: 2 }, 
+            { lyric: "cùng", chord: null, beat: 2 }, 
+            { lyric: "con", chord: null, beat: 2 }, ], },
+             { tokens: [ { lyric: "Cháu", chord: "F", beat: 1 }, 
+              { lyric: "sang", chord: null, beat: 1 }, 
+              { lyric: "năm", chord: null, beat: 2 },
+               { lyric: "lại", chord: null, beat: 2 }, ], }, 
+               { tokens: [ { lyric: "đón", chord: "G", beat: 1 }, 
+                { lyric: "tết", chord: null, beat: 1 }, 
+                { lyric: "sang", chord: null, beat: 2 }, ], },
+                 { tokens: [ { lyric: "Và", chord: "C", beat: 1 }, 
+                  { lyric: "kính", chord: null, beat: 1 }, 
+                  { lyric: "chúc", chord: null, beat: 2 }, 
+                  { lyric: "người", chord: null, beat: 2 },
+                   { lyric: "người", chord: null, beat: 2 }, ], },
+                    { tokens: [ { lyric: "sẽ", chord: "G", beat: 1 }, 
+                      { lyric: "gặp", chord: null, beat: 1 }, 
+                      { lyric: "lành", chord: null, beat: 2 }, 
+                      { lyric: "tết", chord: null, beat: 2 },
+                       { lyric: "sau", chord: null, beat: 2 }, ], },
+                        { tokens: [ { lyric: "được", chord: "Am", beat: 1 },
+                           { lyric: "nhiều", chord: null, beat: 1 }, 
+                           { lyric: "lộc", chord: null, beat: 1 },
+                            { lyric: "hơn", chord: null, beat: 2 },
+                             { lyric: "tết", chord: null, beat: 2 }, ], },
+                              { tokens: [ { lyric: "nay", chord: "Em", beat: 1 }, 
+                                { lyric: "", chord: null, beat:2 }, ], }, 
+                                { tokens: [ { lyric: "tết", chord: "F", beat: 1 }, 
+                                  { lyric: "đến", chord: null, beat: 1 }, 
+                                  { lyric: "đoàn", chord: null, beat: 1 }, 
+                                  { lyric: "tụ", chord: null, beat: 2 }, 
+                                  { lyric: "cùng", chord: null, beat: 2 }, 
+                                  { lyric: "ở", chord: null, beat: 2 }, ], },
+                                   { tokens: [ { lyric: "bên", chord: "C", beat: 1 },
+                                     { lyric: "bếp", chord: null, beat: 1 }, 
+                                     { lyric: "hồng", chord: null, beat: 2 },
+                                      { lyric: "và", chord: null, beat: 2 }, 
+                                      { lyric: "nồi", chord: null, beat: 2 }, ], }, 
+                                      { tokens: [ { lyric: "bánh", chord: "F", beat: 1 }, 
+                                        { lyric: "chưng", chord: null, beat: 1 }, 
+                                        { lyric: "xanh", chord: "G", beat: 2 }, 
+                                        { lyric: "chờ", chord: null, beat: 2 }, ], },
+                                         { tokens: [ { lyric: "xuân", chord: "C", beat: 1 }, 
+                                          { lyric: "đang", chord: null, beat: 1 }, 
+                                          { lyric: "sang", chord: null, beat: 2 }, ], }, ], };
 
 // ---- metronome click (Web Audio API) ----
 function ensureAudioContext(ref: React.MutableRefObject<AudioContext | null>) {
@@ -157,11 +204,22 @@ export default function Page() {
   return (
     <main style={styles.page}>
       <header style={styles.header}>
-        <h1 style={styles.h1}>{demoSong.title}</h1>
-        <p style={styles.muted}>
-          MVP: Lời + hợp âm + tempo + metronome + highlight tuần tự từng dòng (4/4)
-        </p>
-      </header>
+  <h1 style={styles.h1}>{demoSong.title}</h1>
+
+  <div style={styles.metaRow}>
+    <span style={styles.metaPill}>👤 {demoSong.author}</span>
+    <span style={styles.metaPill}>🎼 {demoSong.style}</span>
+    <span style={styles.metaPill}>✅ Tempo gợi ý: {demoSong.recommendedTempo}</span>
+    <span style={styles.metaPill}>⏱ Đang tập: {bpm} BPM</span>
+    <span style={styles.metaPill}>
+      {demoSong.timeSig[0]}/{demoSong.timeSig[1]}
+    </span>
+  </div>
+
+  <p style={styles.muted}>
+    MVP: Lời + hợp âm + tempo + metronome + highlight tuần tự từng dòng (4/4)
+  </p>
+</header>
 
       <section style={styles.controls}>
         <div style={styles.row}>
@@ -372,4 +430,21 @@ const styles: Record<string, React.CSSProperties> = {
   },
   noteTitle: { fontWeight: 800, marginBottom: 8 },
   ul: { margin: 0, paddingLeft: 18 },
+  metaRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 10,
+    marginBottom: 6,
+  },
+  metaPill: {
+    display: "inline-flex",
+    alignItems: "center",
+    padding: "6px 10px",
+    borderRadius: 999,
+    border: "1px solid rgba(0,0,0,0.12)",
+    background: "rgba(0,0,0,0.03)",
+    fontSize: 13,
+    opacity: 0.9,
+  },
 };  
