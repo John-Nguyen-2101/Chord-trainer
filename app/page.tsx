@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
-type Token = { lyric: string; chord?: string | null; beat: 1 | 2 | 3 | 4 };
-type Line = { tokens: Token[] } | { section: string };
+type Beat = 1 | 2 | 3 | 4;
+type Token = { lyric: string; chord?: string | null; beat: Beat };
+type Line =
+  | { tokens: Token[] }
+  | { section: string; id?: string };
 
 type Song = {
   title: string;
   author: string;
-  style: string; // điệu/genre
-  recommendedTempo: string; // tempo khuyên dùng (text)
+  style: string;
+  recommendedTempo: string;
   bpm: number;
   timeSig: [4, 4];
   lines: Line[];
@@ -23,7 +26,7 @@ const demoSong: Song = {
   bpm: 80,
   timeSig: [4, 4],
   lines: [
-    { section: "ĐIỆP KHÚC" },
+    { section: "ĐIỆP KHÚC", id: "section1" },
 
     {
       tokens: [
@@ -52,7 +55,12 @@ const demoSong: Song = {
         { lyric: "thắm", chord: null, beat: 2 },
       ],
     },
-    { tokens: [{ lyric: "tươi", chord: "Em", beat: 1 }, { lyric: "", chord: null, beat: 2 }] },
+    {
+      tokens: [
+        { lyric: "tươi", chord: "Em", beat: 1 },
+        { lyric: "", chord: null, beat: 2 },
+      ],
+    },
 
     {
       tokens: [
@@ -114,7 +122,12 @@ const demoSong: Song = {
         { lyric: "tết", chord: null, beat: 2 },
       ],
     },
-    { tokens: [{ lyric: "nay", chord: "Em", beat: 1 }, { lyric: "", chord: null, beat: 2 }] },
+    {
+      tokens: [
+        { lyric: "nay", chord: "Em", beat: 1 },
+        { lyric: "", chord: null, beat: 2 },
+      ],
+    },
     {
       tokens: [
         { lyric: "tết", chord: "F", beat: 1 },
@@ -149,6 +162,143 @@ const demoSong: Song = {
         { lyric: "sang", chord: null, beat: 2 },
       ],
     },
+    { section: "VERSE", id: "verse1"  },
+
+    {
+      tokens: [
+        { lyric: "Mừng", chord: "C", beat: 1 },
+        { lyric: "tết", chord: null, beat: 1 },
+        { lyric: "đến", chord: null, beat: 3 },
+        { lyric: "mang", chord: null, beat: 2 },
+        { lyric: "lộc", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "đến", chord: "G", beat: 1 },
+        { lyric: "nhà", chord: null, beat: 1 },
+        { lyric: "nhà", chord: null, beat: 2 },
+        { lyric: "cánh", chord: null, beat: 2 },
+        { lyric: "mai", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "vàng", chord: "Am", beat: 1 },
+        { lyric: "cành", chord: null, beat: 1 },
+        { lyric: "đào", chord: null, beat: 1 },
+        { lyric: "hồng", chord: null, beat: 2 },
+        { lyric: "thắm", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "tươi", chord: "Em", beat: 1 },
+        { lyric: "", chord: null, beat: 2 },
+      ],
+    },
+
+    {
+      tokens: [
+        { lyric: "Chúc", chord: "F", beat: 1 },
+        { lyric: "cụ", chord: null, beat: 1 },
+        { lyric: "già", chord: null, beat: 2 },
+        { lyric: "được", chord: null, beat: 2 },
+        { lyric: "sống", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "lâu", chord: "C", beat: 1 },
+        { lyric: "sống", chord: null, beat: 1 },
+        { lyric: "khỏe", chord: null, beat: 2 },
+        { lyric: "cùng", chord: null, beat: 2 },
+        { lyric: "con", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "Cháu", chord: "F", beat: 1 },
+        { lyric: "sang", chord: null, beat: 1 },
+        { lyric: "năm", chord: null, beat: 2 },
+        { lyric: "lại", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "đón", chord: "G", beat: 1 },
+        { lyric: "tết", chord: null, beat: 1 },
+        { lyric: "sang", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "Và", chord: "C", beat: 1 },
+        { lyric: "kính", chord: null, beat: 1 },
+        { lyric: "chúc", chord: null, beat: 2 },
+        { lyric: "người", chord: null, beat: 2 },
+        { lyric: "người", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "sẽ", chord: "G", beat: 1 },
+        { lyric: "gặp", chord: null, beat: 1 },
+        { lyric: "lành", chord: null, beat: 2 },
+        { lyric: "tết", chord: null, beat: 2 },
+        { lyric: "sau", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "được", chord: "Am", beat: 1 },
+        { lyric: "nhiều", chord: null, beat: 1 },
+        { lyric: "lộc", chord: null, beat: 1 },
+        { lyric: "hơn", chord: null, beat: 2 },
+        { lyric: "tết", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "nay", chord: "Em", beat: 1 },
+        { lyric: "", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "tết", chord: "F", beat: 1 },
+        { lyric: "đến", chord: null, beat: 1 },
+        { lyric: "đoàn", chord: null, beat: 1 },
+        { lyric: "tụ", chord: null, beat: 2 },
+        { lyric: "cùng", chord: null, beat: 2 },
+        { lyric: "ở", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "bên", chord: "C", beat: 1 },
+        { lyric: "bếp", chord: null, beat: 1 },
+        { lyric: "hồng", chord: null, beat: 2 },
+        { lyric: "và", chord: null, beat: 2 },
+        { lyric: "nồi", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "bánh", chord: "F", beat: 1 },
+        { lyric: "chưng", chord: null, beat: 1 },
+        { lyric: "xanh", chord: null, beat: 2 },
+        { lyric: "chờ", chord: null, beat: 2 },
+      ],
+    },
+    {
+      tokens: [
+        { lyric: "xuân", chord: "C", beat: 1 },
+        { lyric: "đang", chord: null, beat: 1 },
+        { lyric: "sang", chord: null, beat: 2 },
+      ],
+    },
+  
   ],
 };
 
@@ -180,14 +330,37 @@ function click(ctx: AudioContext, accent: boolean) {
   osc.stop(now + 0.035);
 }
 
+type PlayPhase = "idle" | "countin" | "play";
+
+type TokenLine = { tokens: Token[]; __lineIdx: number };
+
 export default function Page() {
   const [bpm, setBpm] = useState<number>(demoSong.bpm);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [beat, setBeat] = useState<1 | 2 | 3 | 4>(1);
+  const [phase, setPhase] = useState<PlayPhase>("idle");
+
+  const [countIn, setCountIn] = useState<number | null>(null); // 4-3-2-1
+  const [beat, setBeat] = useState<Beat>(1);
+
+  // activeLine là INDEX TRONG demoSong.lines (để render đúng)
   const [activeLine, setActiveLine] = useState(0);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<number | null>(null);
+
+  // refs để restart timer khi đổi bpm mà không phá logic
+  const phaseRef = useRef<PlayPhase>("idle");
+  const remainingRef = useRef<number>(0);
+  const currentBeatRef = useRef<Beat>(1);
+
+  // pos chạy trong tokenLineIndexes (chỉ tokens, bỏ section)
+  const tokenLineIndexes = useMemo(() => {
+    return demoSong.lines
+      .map((l, i) => ("tokens" in l ? i : -1))
+      .filter((i) => i !== -1) as number[];
+  }, []);
+
+  const posRef = useRef<number>(0);
 
   const clearTimer = () => {
     if (timerRef.current) {
@@ -199,8 +372,70 @@ export default function Page() {
   const stop = () => {
     clearTimer();
     setIsPlaying(false);
+    setPhase("idle");
+    phaseRef.current = "idle";
+
     setBeat(1);
-    setActiveLine(0);
+    currentBeatRef.current = 1;
+
+    setCountIn(null);
+    remainingRef.current = 0;
+
+    posRef.current = 0;
+    setActiveLine(tokenLineIndexes[0] ?? 0);
+  };
+
+  const tick = (ctx: AudioContext) => {
+    // ---- PHASE 1: COUNT-IN (4-3-2-1) ----
+    if (phaseRef.current === "countin") {
+      click(ctx, currentBeatRef.current === 1);
+      setBeat(currentBeatRef.current);
+
+      // advance beat
+      currentBeatRef.current =
+        currentBeatRef.current === 4 ? 1 : ((currentBeatRef.current + 1) as Beat);
+
+      // giảm remaining theo tick (1 tick = 1 beat)
+      remainingRef.current -= 1;
+
+      if (remainingRef.current > 0) {
+        setCountIn(remainingRef.current);
+        return;
+      }
+
+      // hết count-in -> vào bài
+      setCountIn(null);
+      setPhase("play");
+      phaseRef.current = "play";
+
+      // reset beat + line
+      currentBeatRef.current = 1;
+      setBeat(1);
+
+      posRef.current = 0;
+      const firstLine = tokenLineIndexes[0] ?? 0;
+      setActiveLine(firstLine);
+
+      // báo vào bài
+      click(ctx, true);
+      return;
+    }
+
+    // ---- PHASE 2: PLAY ----
+    if (phaseRef.current === "play") {
+      // nếu vừa kết thúc beat 4 -> sang dòng token tiếp theo
+      if (currentBeatRef.current === 4) {
+        posRef.current = (posRef.current + 1) % tokenLineIndexes.length;
+        setActiveLine(tokenLineIndexes[posRef.current]);
+      }
+
+      // advance beat
+      currentBeatRef.current =
+        currentBeatRef.current === 4 ? 1 : ((currentBeatRef.current + 1) as Beat);
+
+      setBeat(currentBeatRef.current);
+      click(ctx, currentBeatRef.current === 1);
+    }
   };
 
   const start = async () => {
@@ -209,46 +444,36 @@ export default function Page() {
 
     clearTimer();
 
-    setBeat(1);
-    setActiveLine(0);
     setIsPlaying(true);
 
+    // bắt đầu count-in
+    setPhase("countin");
+    phaseRef.current = "countin";
+
+    remainingRef.current = 4;
+    setCountIn(4);
+
+    currentBeatRef.current = 1;
+    setBeat(1);
+
+    // activeLine set về dòng token đầu tiên (không phải section)
+    posRef.current = 0;
+    const firstLine = tokenLineIndexes[0] ?? 0;
+    setActiveLine(firstLine);
+
+    // click đầu để “bắt nhịp”
     click(ctx, true);
 
-    let currentBeat: 1 | 2 | 3 | 4 = 1;
-    let currentLine = 0;
-
-    timerRef.current = window.setInterval(() => {
-      if (currentBeat === 4) {
-        currentLine = (currentLine + 1) % demoSong.lines.length;
-        setActiveLine(currentLine);
-      }
-
-      currentBeat = currentBeat === 4 ? 1 : ((currentBeat + 1) as 1 | 2 | 3 | 4);
-      setBeat(currentBeat);
-      click(ctx, currentBeat === 1);
-    }, 60000 / bpm);
+    timerRef.current = window.setInterval(() => tick(ctx), 60000 / bpm);
   };
 
+  // restart interval khi đổi BPM (giữ phase/beat/line)
   useEffect(() => {
     if (!isPlaying) return;
-
-    clearTimer();
     const ctx = ensureAudioContext(audioCtxRef);
 
-    let currentBeat: 1 | 2 | 3 | 4 = beat;
-    let currentLine = activeLine;
-
-    timerRef.current = window.setInterval(() => {
-      if (currentBeat === 4) {
-        currentLine = (currentLine + 1) % demoSong.lines.length;
-        setActiveLine(currentLine);
-      }
-
-      currentBeat = currentBeat === 4 ? 1 : ((currentBeat + 1) as 1 | 2 | 3 | 4);
-      setBeat(currentBeat);
-      click(ctx, currentBeat === 1);
-    }, 60000 / bpm);
+    clearTimer();
+    timerRef.current = window.setInterval(() => tick(ctx), 60000 / bpm);
 
     return () => clearTimer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -260,11 +485,11 @@ export default function Page() {
   }, []);
 
   // Render 1 group (tối đa 3 dòng lyric). Section KHÔNG đi vào group này.
-  const renderGroup = (group: { tokens: Token[] }[], key: string) => {
+  const renderGroup = (group: TokenLine[], key: string) => {
     return (
       <div key={key} style={styles.groupRow}>
-        {group.map((line, idxInGroup) => {
-          const lineIdx = group[idxInGroup].__lineIdx as number; // gắn tạm bên dưới
+        {group.map((line) => {
+          const lineIdx = line.__lineIdx;
           const dim = isPlaying && lineIdx !== activeLine;
 
           return (
@@ -272,13 +497,14 @@ export default function Page() {
               key={lineIdx}
               style={{
                 ...styles.line,
-                opacity: dim ? 0.9 : 1, // không mờ quá (mắt yếu vẫn thấy)
+                opacity: dim ? 0.95 : 1, // không mờ nhiều
               }}
             >
               {line.tokens.map((t, idx) => {
                 const hasChord = !!t.chord;
                 const isCurrentLine = lineIdx === activeLine;
-                const isChordBeatActive = isPlaying && isCurrentLine && hasChord && t.beat === beat;
+                const isChordBeatActive =
+                  isPlaying && phase !== "countin" && isCurrentLine && hasChord && t.beat === beat;
 
                 if (!hasChord) {
                   return (
@@ -311,38 +537,37 @@ export default function Page() {
   // Build UI elements: section full width, lyrics grouped 3 lines/row
   const buildSongElements = () => {
     const elements: React.ReactNode[] = [];
-    let buffer: ({ tokens: Token[]; __lineIdx: number }[]) = [];
+    let buffer: TokenLine[] = [];
     let groupCount = 0;
 
     demoSong.lines.forEach((line, index) => {
-      // Section: flush buffer + render section
       if ("section" in line) {
         if (buffer.length > 0) {
-          elements.push(renderGroup(buffer as any, `group-${groupCount++}`));
+          elements.push(renderGroup(buffer, `group-${groupCount++}`));
           buffer = [];
         }
-
         elements.push(
-          <div key={`section-${index}`} style={styles.sectionTitle}>
-            {line.section}
+          <div key={`section-${index}`} style={styles.sectionWrapper}>
+            <div style={styles.sectionTitle}>{line.section}</div>
+        
+            {phase === "countin" && countIn !== null && line.id === "section1" && (
+              <div style={styles.sectionCountIn}>{countIn}</div>
+            )}
           </div>
         );
         return;
       }
 
-      // Tokens line: push to buffer
       buffer.push({ tokens: line.tokens, __lineIdx: index });
 
-      // Enough 3 lines => render a row
       if (buffer.length === 3) {
-        elements.push(renderGroup(buffer as any, `group-${groupCount++}`));
+        elements.push(renderGroup(buffer, `group-${groupCount++}`));
         buffer = [];
       }
     });
 
-    // Remaining lines
     if (buffer.length > 0) {
-      elements.push(renderGroup(buffer as any, `group-${groupCount++}`));
+      elements.push(renderGroup(buffer, `group-${groupCount++}`));
     }
 
     return elements;
@@ -388,11 +613,13 @@ export default function Page() {
                 {b}
               </span>
             ))}
+
+          
           </div>
 
-          <div style={{ marginLeft: 10, opacity: 0.85 }}>
+          {/* <div style={{ marginLeft: 10, opacity: 0.9 }}>
             Line: <b>{activeLine + 1}</b>/{demoSong.lines.length}
-          </div>
+          </div> */}
         </div>
 
         <div style={styles.sliderRow}>
@@ -459,7 +686,7 @@ const styles: Record<string, React.CSSProperties> = {
   buttonPlay: {},
   buttonStop: { background: "rgba(0,0,0,0.06)" },
 
-  beatBox: { display: "flex", gap: 8, marginLeft: 8 },
+  beatBox: { display: "flex", gap: 8, marginLeft: 8, alignItems: "center" },
   beatChip: {
     width: 30,
     height: 30,
@@ -509,11 +736,13 @@ const styles: Record<string, React.CSSProperties> = {
     minWidth: 36,
     padding: "4px 10px",
     borderRadius: 12,
+    // giữ border LUÔN 2px -> highlight không làm nhảy layout
     border: "2px solid rgba(0,0,0,0.16)",
+    boxSizing: "border-box",
   },
 
-  // highlight beat token (viền xanh)
   chordTokenActive: {
+    // chỉ đổi màu border, không đổi độ dày
     border: "2px solid rgba(34, 234, 121, 0.85)",
     transform: "translateY(-1px)",
   },
@@ -526,12 +755,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   lyric: { fontSize: 14, lineHeight: "18px", opacity: 0.95 },
 
-  // section full width
   sectionTitle: {
     fontWeight: 800,
     fontSize: 18,
     letterSpacing: 1,
-    margin: "18px 0 10px 0",
     color: "rgb(34, 234, 121)",
     borderLeft: "4px solid rgb(34, 234, 121)",
     paddingLeft: 10,
@@ -563,5 +790,31 @@ const styles: Record<string, React.CSSProperties> = {
     background: "rgba(0,0,0,0.03)",
     fontSize: 13,
     opacity: 0.95,
+  },
+  countInPill: {
+    marginLeft: 10,
+    padding: "6px 10px",
+    borderRadius: 999,
+    border: "1px solid rgba(0,0,0,0.12)",
+    background: "rgba(246, 7, 7, 0.05)",
+    fontSize: 13,
+    fontWeight: 800,
+  },
+  sectionWrapper: {
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+    margin: "18px 0 10px 0",
+  },
+  
+  sectionCountIn: {
+    fontWeight: 900,
+    color: "rgb(34, 234, 121)",
+    width: 30,           // dùng width cố định thay vì minWidth
+    textAlign: "center",
+    background: "rgba(145, 145, 145, 0.1)",
+    borderRadius: 50,
+    border: "1px solid rgba(140, 135, 135, 0.12)",
+    fontVariantNumeric: "tabular-nums", // số đều nhau
   },
 };
